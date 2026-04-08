@@ -3,8 +3,7 @@ import time
 import logging
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
-
-from ai_client_app.core.utils import get_base_path
+from ai_client_app.core.config import BASE_DIR
 
 try:
     import openai
@@ -15,7 +14,7 @@ except ImportError:
     anthropic = None
 
 # 加载 .env 文件中的环境变量
-load_dotenv(dotenv_path=os.path.join(get_base_path(), ".env"))
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class BaseClient(ABC):
