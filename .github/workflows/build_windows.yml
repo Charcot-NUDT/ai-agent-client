@@ -3,7 +3,7 @@ name: Build Windows Executable
 on:
   push:
     branches:
-      - main # 或者你希望触发构建的分支
+      - master # 或者你希望触发构建的分支
     tags:
       - 'v*.*.*' # 当你打上类似 v1.0.0 的标签时触发
 

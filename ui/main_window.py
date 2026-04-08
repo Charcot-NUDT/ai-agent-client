@@ -154,28 +154,25 @@ class ChatWindow(QWidget):
     def add_initial_message(self):
         self.append_message("System", "欢迎使用 AI 聚合客户端！请开始您的对话。", is_system=True)
 
-    def append_message(self, sender, message, is_system=False):
+    def append_message(self, sender, message, is_system=False, model_name=None):
         cursor = self.chat_display.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         self.chat_display.setTextCursor(cursor)
 
+        html_message = ""
         if sender == "User":
-            html_message = f'<div style="text-align: right; margin: 5px; padding: 10px; background-color: #e0f7fa; border-radius: 15px; max-width: 70%; float: right; clear: both;">' \
-                           f'<p style="margin: 0; font-weight: bold; color: #00796b;">您</p>' \
-                           f'<p style="margin: 0; color: #212121;">{message}</p>' \
-                           f'</div>'
+            html_message = f"""<div style="background-color: #dcf8c6; color: #000000; padding: 12px; margin: 10px 10px 10px 50px; border-radius: 8px; font-family: 'Segoe UI', sans-serif;"><b>🧑‍💻 你:</b><br> {message} </div><br>"""
         elif sender == "AI":
-            html_message = f'<div style="text-align: left; margin: 5px; padding: 10px; background-color: #f0f0f0; border-radius: 15px; max-width: 70%; float: left; clear: both;">' \
-                           f'<p style="margin: 0; font-weight: bold; color: #424242;">AI</p>' \
-                           f'<p style="margin: 0; color: #212121;">{message}</p>' \
-                           f'</div>'
+            display_model_name = f" ({model_name})" if model_name else ""
+            html_message = f"""<div style="background-color: #f1f1f1; color: #212529; padding: 12px; margin: 10px 50px 10px 10px; border-radius: 8px; font-family: 'Segoe UI', sans-serif;"><b>🤖 AI{display_model_name}:</b><br> {message} </div><br>"""
         elif is_system:
-             html_message = f'<div style="text-align: center; margin: 10px 0; color: #616161; font-style: italic; clear: both;">{message}</div>'
+             html_message = f"""<div style="text-align: center; color: #adb5bd; font-size: 12px; margin: 5px;"><i> {message} </i></div><br>"""
         else:
-            html_message = f'<div style="margin: 5px; padding: 10px; background-color: #f9f9f9; border-radius: 5px; clear: both;">' \
-                           f'<p style="margin: 0; font-weight: bold;">{sender}</p>' \
-                           f'<p style="margin: 0;">{message}</p>' \
-                           f'</div>'
+            # Fallback for unexpected sender, though current logic handles User/AI/System
+            html_message = f"""<div style="margin: 5px; padding: 10px; background-color: #f9f9f9; border-radius: 5px; clear: both;">
+                           <p style="margin: 0; font-weight: bold;">{sender}</p>
+                           <p style="margin: 0;">{message}</p>
+                           </div><br>"""
         
         self.chat_display.insertHtml(html_message)
         self.chat_display.verticalScrollBar().setValue(self.chat_display.verticalScrollBar().maximum())
@@ -199,10 +196,12 @@ class ChatWindow(QWidget):
     def _process_ai_response(self, user_message):
         model_name, difficulty_score, ai_response_content = self.router.route_and_generate_response(user_message)
 
-        formatted_ai_response_prefix = f"（难度评估：{difficulty_score}/10，由 {model_name} 处理）"
-        full_ai_response = f"{formatted_ai_response_prefix}<br>{ai_response_content}" # 使用 <br> 换行
+        # Display difficulty assessment as a system message
+        difficulty_message = f"（难度评估：{difficulty_score}/10，由 {model_name} 处理）"
+        self.append_message("System", difficulty_message, is_system=True)
 
-        self.append_message("AI", full_ai_response)
+        # Display AI response in a chat bubble, passing model_name separately
+        self.append_message("AI", ai_response_content, model_name=model_name)
 
         self.memory_manager.add_message("AI", ai_response_content)
         self.memory_manager.increment_round_count()
