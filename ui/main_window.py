@@ -11,8 +11,8 @@ from PyQt6.QtGui import QTextCursor, QFont
 import logging
 
 # 导入核心业务逻辑模块
-from ai_client_app.core.router import Router
-from ai_client_app.core.memory import MemoryManager
+from core.router import Router
+from core.memory import MemoryManager
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

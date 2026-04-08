@@ -70,7 +70,7 @@
 
 2.  **启动应用程序**:
     ```bash
-    python -m ai_client_app.main
+    python -m main
     ```
 
 ## 📦 关于打包

@@ -1,7 +1,7 @@
 import os
 from typing import List, Dict
 from datetime import datetime
-from ai_client_app.core.api_clients import BasicClient
+from core.api_clients import BasicClient
 
 class MemoryManager:
     """

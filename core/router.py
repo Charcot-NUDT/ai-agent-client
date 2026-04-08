@@ -1,7 +1,7 @@
 import re
 import random
 from typing import Tuple
-from ai_client_app.core.api_clients import ClaudeClient, GPTClient, BasicClient, BaseClient
+from core.api_clients import ClaudeClient, GPTClient, BasicClient, BaseClient
 
 class Router:
     """
