@@ -3,9 +3,9 @@ name: Build Windows Executable
 on:
   push:
     branches:
-      - master # 或者你希望触发构建的分支
+      - main # 触发分支改为 main
     tags:
-      - 'v*.*.*' # 当你打上类似 v1.0.0 的标签时触发
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r ai_client_app/requirements.txt
+        pip install -r requirements.txt
         pip install pyinstaller
 
     - name: Build with PyInstaller
