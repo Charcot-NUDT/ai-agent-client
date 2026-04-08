@@ -13,7 +13,7 @@ import logging
 # 导入核心业务逻辑模块
 from ai_client_app.core.router import Router
 from ai_client_app.core.memory import MemoryManager
-from ai_client_app.utils.paths import get_base_path
+from ai_client_app.core.utils import get_base_path
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -245,7 +245,7 @@ class MainWindow(QMainWindow):
         self.splitter.setSizes([self.width() // 3, 2 * self.width() // 3])
 
         # Load initial markdown content
-        project_status_path = os.path.join(get_base_path(), "data", "project_status.md")
+        project_status_path = self.chat_window.project_status_filepath
         self.markdown_preview.update_content(project_status_path)
 
     def apply_global_qss(self):

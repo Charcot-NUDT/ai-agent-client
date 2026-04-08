@@ -4,7 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
 
-from ai_client_app.utils.paths import get_base_path
+from ai_client_app.core.utils import get_base_path
 
 try:
     import openai

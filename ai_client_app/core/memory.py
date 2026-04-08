@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 import logging
 from ai_client_app.core.api_clients import BasicClient # 假设 BasicClient 可以用于总结
+from ai_client_app.core.utils import get_base_path
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
