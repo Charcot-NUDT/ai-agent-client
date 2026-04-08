@@ -13,7 +13,7 @@ import logging
 # 导入核心业务逻辑模块
 from ai_client_app.core.router import Router
 from ai_client_app.core.memory import MemoryManager
-from ai_client_app.core.utils import get_base_path
+from ai_client_app.core.config import MD_FILE_PATH
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -122,10 +122,7 @@ class ChatWindow(QWidget):
         # 实例化 Router 和 MemoryManager
         try:
             self.router = Router()
-            data_dir = os.path.join(get_base_path(), "data")
-            os.makedirs(data_dir, exist_ok=True)
-            self.project_status_filepath = os.path.join(data_dir, "project_status.md")
-            self.memory_manager = MemoryManager(self.project_status_filepath)
+            self.memory_manager = MemoryManager()
         except ValueError as e:
             QMessageBox.critical(self, "配置错误", f"初始化 API 客户端失败: {e}\n请检查 .env 文件中的 API Key 配置。")
             logging.critical(f"初始化 API 客户端失败: {e}")
@@ -245,8 +242,7 @@ class MainWindow(QMainWindow):
         self.splitter.setSizes([self.width() // 3, 2 * self.width() // 3])
 
         # Load initial markdown content
-        project_status_path = self.chat_window.project_status_filepath
-        self.markdown_preview.update_content(project_status_path)
+        self.markdown_preview.update_content(MD_FILE_PATH)
 
     def apply_global_qss(self):
         qss = """

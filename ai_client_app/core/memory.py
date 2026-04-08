@@ -3,46 +3,16 @@ import re
 from datetime import datetime
 import logging
 from ai_client_app.core.api_clients import BasicClient # 假设 BasicClient 可以用于总结
-from ai_client_app.core.utils import get_base_path
+from ai_client_app.core.config import MD_FILE_PATH
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class MemoryManager:
-    def __init__(self, project_status_filepath: str):
+    def __init__(self):
         self.conversation_history = []
         self.conversation_round_count = 0
-        self.project_status_filepath = project_status_filepath
         self.basic_client = BasicClient() # 用于生成总结
 
-        self._create_initial_project_status_file_if_not_exists()
-
-    def _create_initial_project_status_file_if_not_exists(self):
-        """
-        如果 project_status.md 文件不存在，则创建并初始化它。
-        """
-        if not os.path.exists(self.project_status_filepath):
-            logging.info(f"创建初始 project_status.md 文件: {self.project_status_filepath}")
-            initial_content = f"""# 项目状态报告
-
-## 最后更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-## 项目当前进度
-- 初始阶段，等待用户指令。
-
-## 核心解决思路
-- 采用多模型路由，根据任务难度分发请求。
-- 实现动态记忆，定期总结对话内容。
-
-## 遗留问题
-- 暂无。
-
----
-
-"""
-            with open(self.project_status_filepath, 'w', encoding='utf-8') as f:
-                f.write(initial_content)
-        else:
-            logging.info(f"project_status.md 文件已存在: {self.project_status_filepath}")
 
 
     def add_message(self, sender: str, message: str):
@@ -92,7 +62,7 @@ class MemoryManager:
         覆盖更新 project_status.md 文件，只更新总结部分，保持文件顶部不变。
         """
         try:
-            with open(self.project_status_filepath, 'r', encoding='utf-8') as f:
+            with open(MD_FILE_PATH, 'r', encoding='utf-8') as f:
                 current_content = f.read()
 
             # 找到第一个 ## 项目当前进度 的位置，从那里开始替换
@@ -111,9 +81,9 @@ class MemoryManager:
                 # 如果没找到标记，则直接追加
                 new_content = current_content + f"\\n\\n## 对话总结 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\\n\\n" + summary_md + "\n\n---\n\n"
 
-            with open(self.project_status_filepath, 'w', encoding='utf-8') as f:
+            with open(MD_FILE_PATH, 'w', encoding='utf-8') as f:
                 f.write(new_content)
-            logging.info(f"project_status.md 文件已更新: {self.project_status_filepath}")
+            logging.info(f"project_status.md 文件已更新: {MD_FILE_PATH}")
         except Exception as e:
             logging.error(f"更新 project_status.md 文件失败: {e}")
 
