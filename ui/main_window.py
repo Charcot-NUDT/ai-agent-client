@@ -13,6 +13,7 @@ import logging
 # 导入核心业务逻辑模块
 from core.router import Router
 from core.memory import MemoryManager
+from core.config import MD_FILE_PATH
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,15 +23,8 @@ class MarkdownPreview(QTextBrowser):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setReadOnly(True)
-        # 初始样式可以移除，因为会通过 update_content 注入 CSS
-        self.filepath = ""
 
-    def update_content(self, filepath=None):
-        if filepath:
-            self.filepath = filepath
-        if not self.filepath:
-            return
-
+    def update_content(self):
         # 注入现代化的 Markdown CSS
         md_css = """
         <style>
@@ -103,7 +97,7 @@ class MarkdownPreview(QTextBrowser):
         """
 
         try:
-            with open(self.filepath, 'r', encoding='utf-8') as f:
+            with open(MD_FILE_PATH, 'r', encoding='utf-8') as f:
                 md_content = f.read()
             html_content = markdown.markdown(md_content)
             self.setHtml(md_css + html_content) # 拼接 CSS 和 HTML
@@ -121,8 +115,7 @@ class ChatWindow(QWidget):
         # 实例化 Router 和 MemoryManager
         try:
             self.router = Router()
-            self.project_status_filepath = os.path.join(os.path.dirname(__file__), "..", "data", "project_status.md")
-            self.memory_manager = MemoryManager(self.project_status_filepath)
+            self.memory_manager = MemoryManager()
         except ValueError as e:
             QMessageBox.critical(self, "配置错误", f"初始化 API 客户端失败: {e}\n请检查 .env 文件中的 API Key 配置。")
             logging.critical(f"初始化 API 客户端失败: {e}")
@@ -242,8 +235,7 @@ class MainWindow(QMainWindow):
         self.splitter.setSizes([self.width() // 3, 2 * self.width() // 3])
 
         # Load initial markdown content
-        project_status_path = os.path.join(os.path.dirname(__file__), "..", "data", "project_status.md")
-        self.markdown_preview.update_content(project_status_path)
+        self.markdown_preview.update_content()
 
     def apply_global_qss(self):
         qss = """

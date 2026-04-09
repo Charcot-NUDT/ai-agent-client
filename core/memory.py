@@ -1,24 +1,24 @@
 import os
+import re
 from typing import List, Dict
 from datetime import datetime
 from core.api_clients import BasicClient
+from core.config import MD_FILE_PATH
 
 class MemoryManager:
     """
     记忆管理类，负责维护对话历史，并在特定条件触发时生成总结并写入到文件。
     """
-    def __init__(self, project_status_filepath: str):
+    def __init__(self):
         """
         初始化记忆管理器。
-        :param project_status_filepath: project_status.md 文件的完整路径。
         """
         self.conversation_history: List[Dict[str, str]] = []
         self.conversation_round_count = 0
-        self.project_status_filepath = project_status_filepath
         self.summary_client = BasicClient() # 用于生成总结的客户端，这里使用 BasicClient
 
         # 确保 project_status.md 文件存在
-        if not os.path.exists(self.project_status_filepath):
+        if not os.path.exists(MD_FILE_PATH):
             self._create_initial_project_status_file()
 
     def _create_initial_project_status_file(self):
@@ -47,9 +47,9 @@ class MemoryManager:
             "-   实现 core/memory.py 中的智能总结逻辑。\n"
             "-   将模拟功能替换为核心模块的真实实现。\n"
         )
-        with open(self.project_status_filepath, 'w', encoding='utf-8') as f:
+        with open(MD_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write(initial_content)
-        print(f"[DEBUG] Created initial project_status.md at {self.project_status_filepath}")
+        print(f"[DEBUG] Created initial project_status.md at {MD_FILE_PATH}")
 
     def add_message(self, sender: str, message: str):
         """
@@ -108,7 +108,7 @@ class MemoryManager:
             # 读取现有内容，并替换旧的总结部分，或者追加
             # 为了简化，这里直接在文件末尾追加新总结，并更新“最后更新时间”
             # 在实际应用中，可能需要更复杂的Markdown解析和更新逻辑
-            with open(self.project_status_filepath, 'r+', encoding='utf-8') as f:
+            with open(MD_FILE_PATH, 'r+', encoding='utf-8') as f:
                 content = f.read()
                 f.seek(0) # 回到文件开头
                 # 更新“最后更新时间”
@@ -118,49 +118,6 @@ class MemoryManager:
                 # 将新总结添加到文件末尾
                 f.write(content.strip() + "\n\n" + new_summary.strip() + "\n")
                 f.truncate() # 截断文件，以防新内容比旧内容短
-            print(f"[DEBUG] project_status.md updated successfully at {self.project_status_filepath}")
+            print(f"[DEBUG] project_status.md updated successfully at {MD_FILE_PATH}")
         except Exception as e:
             print(f"[ERROR] Failed to update project_status.md: {e}")
-
-if __name__ == '__main__':
-    # 简单的测试用例
-    print("--- 测试记忆管理器 ---")
-    test_filepath = os.path.join(os.path.dirname(__file__), "..", "data", "test_project_status.md")
-    
-    # 确保测试文件是干净的
-    if os.path.exists(test_filepath):
-        os.remove(test_filepath)
-
-    memory_manager = MemoryManager(test_filepath)
-
-    # 模拟对话
-    memory_manager.add_message("User", "你好，我们开始项目吧。")
-    memory_manager.add_message("AI", "好的，我已准备就绪。")
-    memory_manager.increment_round_count() # Round 1
-
-    memory_manager.add_message("User", "UI 框架搭建好了吗？")
-    memory_manager.add_message("AI", "是的，基本UI框架已完成，左右分栏和聊天窗口已实现。")
-    memory_manager.increment_round_count() # Round 2
-
-    memory_manager.add_message("User", "路由模块的进度如何？")
-    memory_manager.add_message("AI", "路由模块已完成初步的难度评估和模型分发模拟。")
-    memory_manager.increment_round_count() # Round 3 - 触发总结
-
-    memory_manager.check_and_summarize()
-
-    # 再次模拟对话
-    memory_manager.add_message("User", "记忆模块呢？")
-    memory_manager.add_message("AI", "记忆模块正在实现中，将支持对话总结并更新项目状态。")
-    memory_manager.increment_round_count() # Round 4
-
-    memory_manager.add_message("User", "API客户端的进展？")
-    memory_manager.add_message("AI", "API客户端已实现基类和三个模拟子类，支持模拟网络延迟。")
-    memory_manager.increment_round_count() # Round 5
-
-    memory_manager.add_message("User", "好的，继续努力。")
-    memory_manager.add_message("AI", "收到！")
-    memory_manager.increment_round_count() # Round 6 - 触发总结
-
-    memory_manager.check_and_summarize()
-
-    print(f"\n请查看文件: {test_filepath}")
