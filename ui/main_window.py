@@ -329,7 +329,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # 设置全局字体 (可选，QSS 优先级更高)
     font = QFont("Segoe UI", 10)
     app.setFont(font)
     window = MainWindow()
