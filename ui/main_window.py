@@ -218,6 +218,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         main_layout = QHBoxLayout()
+        main_layout.setContentsMargins(15, 15, 15, 15) # 设置外边距
+        main_layout.setSpacing(15) # 设置控件之间的间距
         self.central_widget.setLayout(main_layout)
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
@@ -239,42 +241,87 @@ class MainWindow(QMainWindow):
 
     def apply_global_qss(self):
         qss = """
+        /* 全局样式 */
+        QWidget {
+            font-family: "Segoe UI", "Microsoft YaHei", -apple-system, sans-serif;
+            font-size: 14px;
+        }
+
+        /* 主窗口 */
         QMainWindow {
-            background-color: #f5f6fa; /* 浅灰白色背景 */
+            background-color: #F5F7FA;
         }
+
+        /* 卡片化容器 */
+        QTextBrowser, QLineEdit {
+            background-color: #FFFFFF;
+            border: 1px solid #E4E7ED;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        /* 聊天显示窗口 - 继承通用卡片样式 */
         QTextBrowser {
-            background-color: #ffffff; /* 纯白背景 */
-            border: 1px solid #e0e0e0; /* 淡淡的边框 */
-            border-radius: 8px; /* 圆角 */
-            padding: 10px;
         }
+
+        /* 聊天输入框 */
         QLineEdit {
-            border: 1px solid #dcdcdc;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 14px;
-            background-color: #ffffff;
+            min-height: 28px; /* 增加最小高度以改善视觉效果 */
         }
+        QLineEdit:focus {
+            border-color: #409EFF;
+        }
+
+        /* 发送按钮 */
         QPushButton {
-            background-color: #0984e3; /* 科技蓝 */
-            color: #ffffff; /* 纯白文字 */
-            border: none; /* 去掉默认边框 */
+            background-color: #409EFF;
+            color: white;
+            border: none;
             border-radius: 8px;
-            padding: 8px 15px;
-            font-size: 14px;
+            padding: 12px 20px; /* 增加垂直和水平 padding */
             font-weight: bold;
         }
         QPushButton:hover {
-            background-color: #74b9ff; /* 悬停时颜色变浅 */
+            background-color: #66B1FF;
         }
         QPushButton:disabled {
-            background-color: #cccccc;
+            background-color: #A0CFFF;
+            color: #E4E7ED;
         }
+
+        /* 分割线 */
         QSplitter::handle {
-            background-color: #ccc;
+            background-color: transparent; /* 使其不可见 */
+            width: 5px; /* 增加拖拽区域 */
         }
         QSplitter::handle:hover {
-            background-color: #aaa;
+            background-color: #E4E7ED;
+        }
+
+        /* 现代滚动条 */
+        QScrollBar:vertical {
+            border: none;
+            background: transparent;
+            width: 8px;
+            margin: 0px 0px 0px 0px;
+        }
+        QScrollBar::handle:vertical {
+            background: #DCDFE6;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background: #C0C4CC;
+        }
+        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+            border: none;
+            background: none;
+        }
+        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+            background: none;
+        }
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+            background: none;
         }
         """
         self.setStyleSheet(qss)
