@@ -266,6 +266,7 @@ class MainWindow(QMainWindow):
 
         /* 聊天输入框 */
         QLineEdit {
+            color: #212529; /* 强制指定文字颜色 */
             min-height: 28px; /* 增加最小高度以改善视觉效果 */
         }
         QLineEdit:focus {
